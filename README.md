@@ -135,3 +135,5 @@ $ sne4onnx \
 
 ## 7. Reference
 1. https://github.com/onnx/onnx/blob/main/docs/PythonAPIOverview.md
+2. https://github.com/PINTO0309/snd4onnx
+3. https://github.com/PINTO0309/scs4onnx
