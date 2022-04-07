@@ -92,7 +92,7 @@ extraction(
         e.g. ['ddd','eee','fff']
 ```
 
-## 3. CLI Execution
+## 4. CLI Execution
 ```bash
 $ sne4onnx \
 --input_onnx_file_path input.onnx \
@@ -101,7 +101,7 @@ $ sne4onnx \
 --output_op_names ddd,eee,fff
 ```
 
-## 4. In-script Execution
+## 5. In-script Execution
 ```python
 from sne4onnx import extraction
 
@@ -113,13 +113,13 @@ extraction(
 )
 ```
 
-## 5. Samples
-### 5-1. Pre-extraction
+## 6. Samples
+### 6-1. Pre-extraction
 ![image](https://user-images.githubusercontent.com/33194443/162101010-13662cb6-a93b-4ebb-ad46-96da055a56a4.png)
 ![image](https://user-images.githubusercontent.com/33194443/162100392-71d58154-ea75-4a39-88a5-930a6e7a5d6a.png)
 ![image](https://user-images.githubusercontent.com/33194443/162100741-89e5cf0e-de21-469c-a060-1a05a3a2ce1b.png)
 
-### 5-2.  Extraction
+### 6-2.  Extraction
 ```bash
 $ sne4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280.onnx \
@@ -128,10 +128,10 @@ $ sne4onnx \
 --output_op_names 497,785
 ```
 
-### 5-3. Extracted
+### 6-3. Extracted
 ![image](https://user-images.githubusercontent.com/33194443/162101435-a9e1209b-8b87-4c85-b66e-517e26aab9ba.png)
 ![image](https://user-images.githubusercontent.com/33194443/162101596-ba0cd103-3daa-4a2b-98d4-cf4d72074f64.png)
 ![image](https://user-images.githubusercontent.com/33194443/162101783-45e0fde7-2d9a-4625-a0f8-95efa7f79473.png)
 
-## 6. Reference
+## 7. Reference
 1. https://github.com/onnx/onnx/blob/main/docs/PythonAPIOverview.md
