@@ -114,7 +114,7 @@ def main():
     parser.add_argument(
         '--output_onnx_file_path',
         type=str,
-        default='',
+        default='extracted.onnx',
         help='Output onnx file path. If not specified, extracted.onnx is output.'
     )
     args = parser.parse_args()
