@@ -5,6 +5,7 @@ A very simple tool for situations where optimization with onnx-simplifier would 
 
 # Key concept
 - [x] If INPUT OP name and OUTPUT OP name are specified, the onnx graph within the range of the specified OP name is extracted and .onnx is generated.
+- [ ] Change backend to onnx-graphsurgeon so that onnx.ModelProto can be specified as input.
 
 ## 1. Setup
 ### 1-1. HostPC
