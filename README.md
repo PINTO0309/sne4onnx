@@ -35,27 +35,31 @@ $ cd /workdir
 $ sne4onnx -h
 
 usage:
-    sne4onnx [-h] \
-    --input_onnx_file_path INPUT_ONNX_FILE_PATH \
-    --output_onnx_file_path OUTPUT_ONNX_FILE_PATH \
-    --input_op_names INPUT_OP_NAMES \
+    sne4onnx [-h]
+    --input_onnx_file_path INPUT_ONNX_FILE_PATH
+    --input_op_names INPUT_OP_NAMES
     --output_op_names OUTPUT_OP_NAMES
+    [--output_onnx_file_path OUTPUT_ONNX_FILE_PATH]
 
 optional arguments:
   -h, --help
         show this help message and exit
+
   --input_onnx_file_path INPUT_ONNX_FILE_PATH
         Input onnx file path.
-  --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
-        Output onnx file path.
+
   --input_op_names INPUT_OP_NAMES
         List of OP names to specify for the input layer of the model.
         Specify the name of the OP, separated by commas.
         e.g. --input_op_names aaa,bbb,ccc
+
   --output_op_names OUTPUT_OP_NAMES
         List of OP names to specify for the output layer of the model.
         Specify the name of the OP, separated by commas.
         e.g. --output_op_names ddd,eee,fff
+
+  --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
+        Output onnx file path. If not specified, extracted.onnx is output.
 ```
 
 ## 3. In-script Usage
@@ -68,18 +72,15 @@ Help on function extraction in module sne4onnx.onnx_network_extraction:
 
 extraction(
     input_onnx_file_path: str,
-    output_onnx_file_path: str,
     input_op_names: List[str],
-    output_op_names: List[str]
-)
+    output_op_names: List[str],
+    output_onnx_file_path: Union[str, NoneType] = ''
+) -> onnx.onnx_ml_pb2.ModelProto
 
     Parameters
     ----------
     input_onnx_file_path: str
         Input onnx file path.
-
-    output_onnx_file_path: str
-        Output onnx file path.
 
     input_op_names: List[str]
         List of OP names to specify for the input layer of the model.
@@ -90,26 +91,36 @@ extraction(
         List of OP names to specify for the output layer of the model.
         Specify the name of the OP, separated by commas.
         e.g. ['ddd','eee','fff']
+
+    output_onnx_file_path: Optional[str]
+        Output onnx file path.
+        If not specified, .onnx is not output.
+        Default: ''
+
+    Returns
+    -------
+    extracted_graph: onnx.ModelProto
+        Extracted onnx ModelProto
 ```
 
 ## 4. CLI Execution
 ```bash
 $ sne4onnx \
 --input_onnx_file_path input.onnx \
---output_onnx_file_path output.onnx \
 --input_op_names aaa,bbb,ccc \
---output_op_names ddd,eee,fff
+--output_op_names ddd,eee,fff \
+--output_onnx_file_path output.onnx
 ```
 
 ## 5. In-script Execution
 ```python
 from sne4onnx import extraction
 
-extraction(
+extracted_graph = extraction(
   input_onnx_file_path='input.onnx',
-  output_onnx_file_path='output.onnx',
   input_op_names=['aaa', 'bbb', 'ccc'],
   output_op_names=['ddd', 'eee', 'fff'],
+  output_onnx_file_path='output.onnx',
 )
 ```
 
@@ -123,9 +134,9 @@ extraction(
 ```bash
 $ sne4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280.onnx \
---output_onnx_file_path hitnet_sf_finalpass_720x960_head.onnx \
 --input_op_names 0,1 \
---output_op_names 497,785
+--output_op_names 497,785 \
+--output_onnx_file_path hitnet_sf_finalpass_720x960_head.onnx
 ```
 
 ### 6-3. Extracted

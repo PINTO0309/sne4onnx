@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
+import os
 from argparse import ArgumentParser
 import onnx
-from typing import List
+from typing import Optional, List
 
 class Color:
     BLACK          = '\033[30m'
@@ -32,19 +33,16 @@ class Color:
 
 def extraction(
     input_onnx_file_path: str,
-    output_onnx_file_path: str,
     input_op_names: List[str],
     output_op_names: List[str],
-):
+    output_onnx_file_path: Optional[str] = '',
+) -> onnx.ModelProto:
 
     """
     Parameters
     ----------
     input_onnx_file_path: str
         Input onnx file path.
-
-    output_onnx_file_path: str
-        Output onnx file path.
 
     input_op_names: List[str]
         List of OP names to specify for the input layer of the model.\n\
@@ -55,14 +53,36 @@ def extraction(
         List of OP names to specify for the output layer of the model.\n\
         Specify the name of the OP, separated by commas.\n\
         e.g. ['ddd','eee','fff']
+
+    output_onnx_file_path: Optional[str]
+        Output onnx file path.\n\
+        If not specified, .onnx is not output.\n\
+        Default: ''
+
+    Returns
+    -------
+    extracted_graph: onnx.ModelProto
+        Extracted onnx ModelProto
     """
+
+    tmp_onnx_file = ''
+    if not output_onnx_file_path:
+        tmp_onnx_file = 'extracted.onnx'
+    else:
+        tmp_onnx_file = output_onnx_file_path
 
     onnx.utils.extract_model(
         input_onnx_file_path,
-        output_onnx_file_path,
+        tmp_onnx_file,
         input_op_names,
         output_op_names
     )
+
+    extracted_graph = onnx.load(tmp_onnx_file)
+    if not output_onnx_file_path:
+        os.remove(tmp_onnx_file)
+
+    return extracted_graph
 
 
 def main():
@@ -72,12 +92,6 @@ def main():
         type=str,
         required=True,
         help='Input onnx file path.'
-    )
-    parser.add_argument(
-        '--output_onnx_file_path',
-        type=str,
-        required=True,
-        help='Output onnx file path.'
     )
     parser.add_argument(
         '--input_op_names',
@@ -97,18 +111,25 @@ def main():
             Specify the name of the OP, separated by commas. \
             e.g. --output_op_names ddd,eee,fff"
     )
+    parser.add_argument(
+        '--output_onnx_file_path',
+        type=str,
+        default='',
+        help='Output onnx file path. If not specified, extracted.onnx is output.'
+    )
     args = parser.parse_args()
 
     input_op_names = args.input_op_names.strip(' ,').replace(' ','').split(',')
     output_op_names = args.output_op_names.strip(' ,').replace(' ','').split(',')
 
     # Model extraction
-    extraction(
+    extracted_graph = extraction(
         input_onnx_file_path=args.input_onnx_file_path,
-        output_onnx_file_path=args.output_onnx_file_path,
         input_op_names=input_op_names,
         output_op_names=output_op_names,
+        output_onnx_file_path=args.output_onnx_file_path,
     )
+
 
 if __name__ == '__main__':
     main()
