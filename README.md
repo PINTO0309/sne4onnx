@@ -5,7 +5,7 @@ A very simple tool for situations where optimization with onnx-simplifier would 
 
 # Key concept
 - [x] If INPUT OP name and OUTPUT OP name are specified, the onnx graph within the range of the specified OP name is extracted and .onnx is generated.
-- [ ] Change backend to onnx-graphsurgeon so that onnx.ModelProto can be specified as input.
+- [x] Change backend to `onnx.utils.Extractor.extract_model` so that onnx.ModelProto can be specified as input.
 
 ## 1. Setup
 ### 1-1. HostPC
@@ -75,7 +75,8 @@ extraction(
     input_onnx_file_path: str,
     input_op_names: List[str],
     output_op_names: List[str],
-    output_onnx_file_path: Union[str, NoneType] = ''
+    output_onnx_file_path: Union[str, NoneType] = '',
+    onnx_graph: Union[onnx.onnx_ml_pb2.ModelProto, NoneType] = None
 ) -> onnx.onnx_ml_pb2.ModelProto
 
     Parameters
@@ -98,6 +99,11 @@ extraction(
         If not specified, .onnx is not output.
         Default: ''
 
+    onnx_graph: Optional[onnx.ModelProto]
+        onnx.ModelProto.
+        Either input_onnx_file_path or onnx_graph must be specified.
+        onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
+
     Returns
     -------
     extracted_graph: onnx.ModelProto
@@ -114,6 +120,7 @@ $ sne4onnx \
 ```
 
 ## 5. In-script Execution
+### 5-1. Use ONNX files
 ```python
 from sne4onnx import extraction
 
@@ -122,6 +129,17 @@ extracted_graph = extraction(
   input_op_names=['aaa', 'bbb', 'ccc'],
   output_op_names=['ddd', 'eee', 'fff'],
   output_onnx_file_path='output.onnx',
+)
+```
+### 5-2. Use onnx.ModelProto
+```python
+from sne4onnx import extraction
+
+extracted_graph = extraction(
+  input_op_names=['aaa', 'bbb', 'ccc'],
+  output_op_names=['ddd', 'eee', 'fff'],
+  output_onnx_file_path='output.onnx',
+  onnx_graph=graph,
 )
 ```
 
@@ -147,6 +165,8 @@ $ sne4onnx \
 
 ## 7. Reference
 1. https://github.com/onnx/onnx/blob/main/docs/PythonAPIOverview.md
-2. https://github.com/PINTO0309/snd4onnx
-3. https://github.com/PINTO0309/scs4onnx
-4. https://github.com/PINTO0309/snc4onnx
+2. https://docs.nvidia.com/deeplearning/tensorrt/onnx-graphsurgeon/docs/index.html
+3. https://github.com/NVIDIA/TensorRT/tree/main/tools/onnx-graphsurgeon
+4. https://github.com/PINTO0309/snd4onnx
+5. https://github.com/PINTO0309/scs4onnx
+6. https://github.com/PINTO0309/snc4onnx

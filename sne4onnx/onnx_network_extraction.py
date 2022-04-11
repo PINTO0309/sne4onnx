@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import os
+import sys
 from argparse import ArgumentParser
 import onnx
 from typing import Optional, List
@@ -36,6 +36,7 @@ def extraction(
     input_op_names: List[str],
     output_op_names: List[str],
     output_onnx_file_path: Optional[str] = '',
+    onnx_graph: Optional[onnx.ModelProto] = None,
 ) -> onnx.ModelProto:
 
     """
@@ -59,28 +60,41 @@ def extraction(
         If not specified, .onnx is not output.\n\
         Default: ''
 
+    onnx_graph: Optional[onnx.ModelProto]
+        onnx.ModelProto.\n\
+        Either input_onnx_file_path or onnx_graph must be specified.\n\
+        onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
+
     Returns
     -------
     extracted_graph: onnx.ModelProto
         Extracted onnx ModelProto
     """
 
-    tmp_onnx_file = ''
-    if not output_onnx_file_path:
-        tmp_onnx_file = 'extracted.onnx'
-    else:
-        tmp_onnx_file = output_onnx_file_path
+    if not input_onnx_file_path and not onnx_graph:
+        print(
+            f'{Color.RED}ERROR:{Color.RESET} '+
+            f'One of input_onnx_file_path or onnx_graph must be specified.'
+        )
+        sys.exit(1)
 
-    onnx.utils.extract_model(
-        input_onnx_file_path,
-        tmp_onnx_file,
+    # Load
+    graph = None
+    if not onnx_graph:
+        graph = onnx.load(input_onnx_file_path)
+    else:
+        graph = onnx_graph
+
+    # Extract
+    extractor = onnx.utils.Extractor(graph)
+    extracted_graph = extractor.extract_model(
         input_op_names,
-        output_op_names
+        output_op_names,
     )
 
-    extracted_graph = onnx.load(tmp_onnx_file)
-    if not output_onnx_file_path:
-        os.remove(tmp_onnx_file)
+    # Save
+    if output_onnx_file_path:
+        onnx.save(extracted_graph, output_onnx_file_path)
 
     return extracted_graph
 
