@@ -72,18 +72,15 @@ $ python
 Help on function extraction in module sne4onnx.onnx_network_extraction:
 
 extraction(
-    input_onnx_file_path: str,
     input_op_names: List[str],
     output_op_names: List[str],
-    output_onnx_file_path: Union[str, NoneType] = '',
-    onnx_graph: Union[onnx.onnx_ml_pb2.ModelProto, NoneType] = None
+    input_onnx_file_path: Union[str, NoneType] = '',
+    onnx_graph: Union[onnx.onnx_ml_pb2.ModelProto, NoneType] = None,
+    output_onnx_file_path: Union[str, NoneType] = ''
 ) -> onnx.onnx_ml_pb2.ModelProto
 
     Parameters
     ----------
-    input_onnx_file_path: str
-        Input onnx file path.
-
     input_op_names: List[str]
         List of OP names to specify for the input layer of the model.
         Specify the name of the OP, separated by commas.
@@ -94,15 +91,20 @@ extraction(
         Specify the name of the OP, separated by commas.
         e.g. ['ddd','eee','fff']
 
-    output_onnx_file_path: Optional[str]
-        Output onnx file path.
-        If not specified, .onnx is not output.
-        Default: ''
+    input_onnx_file_path: Optional[str]
+        Input onnx file path.
+        Either input_onnx_file_path or onnx_graph must be specified.
+        onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
 
     onnx_graph: Optional[onnx.ModelProto]
         onnx.ModelProto.
         Either input_onnx_file_path or onnx_graph must be specified.
         onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
+
+    output_onnx_file_path: Optional[str]
+        Output onnx file path.
+        If not specified, .onnx is not output.
+        Default: ''
 
     Returns
     -------
@@ -125,9 +127,9 @@ $ sne4onnx \
 from sne4onnx import extraction
 
 extracted_graph = extraction(
-  input_onnx_file_path='input.onnx',
   input_op_names=['aaa', 'bbb', 'ccc'],
   output_op_names=['ddd', 'eee', 'fff'],
+  input_onnx_file_path='input.onnx',
   output_onnx_file_path='output.onnx',
 )
 ```
@@ -138,8 +140,8 @@ from sne4onnx import extraction
 extracted_graph = extraction(
   input_op_names=['aaa', 'bbb', 'ccc'],
   output_op_names=['ddd', 'eee', 'fff'],
-  output_onnx_file_path='output.onnx',
   onnx_graph=graph,
+  output_onnx_file_path='output.onnx',
 )
 ```
 

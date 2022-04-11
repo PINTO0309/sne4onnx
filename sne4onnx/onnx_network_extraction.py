@@ -32,19 +32,16 @@ class Color:
 
 
 def extraction(
-    input_onnx_file_path: str,
     input_op_names: List[str],
     output_op_names: List[str],
-    output_onnx_file_path: Optional[str] = '',
+    input_onnx_file_path: Optional[str] = '',
     onnx_graph: Optional[onnx.ModelProto] = None,
+    output_onnx_file_path: Optional[str] = '',
 ) -> onnx.ModelProto:
 
     """
     Parameters
     ----------
-    input_onnx_file_path: str
-        Input onnx file path.
-
     input_op_names: List[str]
         List of OP names to specify for the input layer of the model.\n\
         Specify the name of the OP, separated by commas.\n\
@@ -55,15 +52,20 @@ def extraction(
         Specify the name of the OP, separated by commas.\n\
         e.g. ['ddd','eee','fff']
 
-    output_onnx_file_path: Optional[str]
-        Output onnx file path.\n\
-        If not specified, .onnx is not output.\n\
-        Default: ''
+    input_onnx_file_path: Optional[str]
+        Input onnx file path.\n\
+        Either input_onnx_file_path or onnx_graph must be specified.\n\
+        onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
 
     onnx_graph: Optional[onnx.ModelProto]
         onnx.ModelProto.\n\
         Either input_onnx_file_path or onnx_graph must be specified.\n\
         onnx_graph If specified, ignore input_onnx_file_path and process onnx_graph.
+
+    output_onnx_file_path: Optional[str]
+        Output onnx file path.\n\
+        If not specified, .onnx is not output.\n\
+        Default: ''
 
     Returns
     -------
