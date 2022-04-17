@@ -176,3 +176,6 @@ $ sne4onnx \
 6. https://github.com/PINTO0309/snc4onnx
 7. https://github.com/PINTO0309/sog4onnx
 8. https://github.com/PINTO0309/PINTO_model_zoo
+
+## 8. Issues
+https://github.com/PINTO0309/simple-onnx-processing-tools/issues
