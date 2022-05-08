@@ -107,16 +107,35 @@ def extraction(
     graph.cleanup().toposort()
 
     # Extraction of input OP and output OP
-    graph_node_inputs = [graph_nodes for graph_nodes in graph.nodes for graph_nodes_input in graph_nodes.inputs if graph_nodes_input.name in input_op_names]
-    graph_node_outputs = [graph_nodes for graph_nodes in graph.nodes for graph_nodes_output in graph_nodes.outputs if graph_nodes_output.name in output_op_names]
+    graph_node_inputs = [
+        graph_nodes \
+            for graph_nodes in graph.nodes \
+                for graph_nodes_input in graph_nodes.inputs \
+                    if graph_nodes_input.name in input_op_names
+    ]
+    graph_node_outputs = [
+        graph_nodes \
+            for graph_nodes in graph.nodes \
+                for graph_nodes_output in graph_nodes.outputs \
+                    if graph_nodes_output.name in output_op_names
+    ]
 
     # Init graph INPUT/OUTPUT
     graph.inputs.clear()
     graph.outputs.clear()
 
     # Update graph INPUT/OUTPUT
-    graph.inputs = [graph_node_input for graph_node in graph_node_inputs for graph_node_input in graph_node.inputs if graph_node_input.shape]
-    graph.outputs = [graph_node_output for graph_node in graph_node_outputs for graph_node_output in graph_node.outputs]
+    graph.inputs = [
+        graph_node_input \
+            for graph_node in graph_node_inputs \
+                for graph_node_input in graph_node.inputs \
+                    if graph_node_input.shape
+    ]
+    graph.outputs = [
+        graph_node_output \
+            for graph_node in graph_node_outputs \
+                for graph_node_output in graph_node.outputs
+    ]
 
     # Cleanup
     graph.cleanup().toposort()

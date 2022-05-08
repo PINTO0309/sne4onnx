@@ -7,7 +7,7 @@ https://github.com/PINTO0309/simple-onnx-processing-tools
 
 # Key concept
 - [x] If INPUT OP name and OUTPUT OP name are specified, the onnx graph within the range of the specified OP name is extracted and .onnx is generated.
-- [x] Change backend to `onnx.utils.Extractor.extract_model` so that onnx.ModelProto can be specified as input.
+- [x] I do not use `onnx.utils.extractor.extract_model` because it is very slow and I implement my own model separation logic.
 
 ## 1. Setup
 ### 1-1. HostPC
@@ -18,6 +18,7 @@ $ echo export PATH="~/.local/bin:$PATH" >> ~/.bashrc \
 
 ### run
 $ pip install -U onnx \
+&& python3 -m pip install -U onnx_graphsurgeon --index-url https://pypi.ngc.nvidia.com
 && pip install -U sne4onnx
 ```
 ### 1-2. Docker
@@ -37,18 +38,18 @@ usage:
 
 optional arguments:
   -h, --help
-        show this help message and exit
+        show this help message and exit.
 
   --input_onnx_file_path INPUT_ONNX_FILE_PATH
         Input onnx file path.
 
   --input_op_names INPUT_OP_NAMES
         List of OP names to specify for the input layer of the model.
-         e.g. --input_op_names aaa bbb ccc
+        e.g. --input_op_names aaa bbb ccc
 
   --output_op_names OUTPUT_OP_NAMES
         List of OP names to specify for the output layer of the model.
-         e.g. --output_op_names ddd eee fff
+        e.g. --output_op_names ddd eee fff
 
   --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
         Output onnx file path. If not specified, extracted.onnx is output.
@@ -124,8 +125,8 @@ $ sne4onnx \
 from sne4onnx import extraction
 
 extracted_graph = extraction(
-  input_op_names=['aaa', 'bbb', 'ccc'],
-  output_op_names=['ddd', 'eee', 'fff'],
+  input_op_names=['aaa','bbb','ccc'],
+  output_op_names=['ddd','eee','fff'],
   input_onnx_file_path='input.onnx',
   output_onnx_file_path='output.onnx',
 )
@@ -135,8 +136,8 @@ extracted_graph = extraction(
 from sne4onnx import extraction
 
 extracted_graph = extraction(
-  input_op_names=['aaa', 'bbb', 'ccc'],
-  output_op_names=['ddd', 'eee', 'fff'],
+  input_op_names=['aaa','bbb','ccc'],
+  output_op_names=['ddd','eee','fff'],
   onnx_graph=graph,
   output_onnx_file_path='output.onnx',
 )
