@@ -33,6 +33,7 @@ usage:
     --input_op_names INPUT_OP_NAMES
     --output_op_names OUTPUT_OP_NAMES
     [--output_onnx_file_path OUTPUT_ONNX_FILE_PATH]
+    [--non_verbose]
 
 optional arguments:
   -h, --help
@@ -43,16 +44,17 @@ optional arguments:
 
   --input_op_names INPUT_OP_NAMES
         List of OP names to specify for the input layer of the model.
-        Specify the name of the OP, separated by commas.
-        e.g. --input_op_names aaa,bbb,ccc
+         e.g. --input_op_names aaa bbb ccc
 
   --output_op_names OUTPUT_OP_NAMES
         List of OP names to specify for the output layer of the model.
-        Specify the name of the OP, separated by commas.
-        e.g. --output_op_names ddd,eee,fff
+         e.g. --output_op_names ddd eee fff
 
   --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
         Output onnx file path. If not specified, extracted.onnx is output.
+
+  --non_verbose
+        Do not show all information logs. Only error logs are displayed.
 ```
 
 ## 3. In-script Usage
@@ -68,19 +70,18 @@ extraction(
     output_op_names: List[str],
     input_onnx_file_path: Union[str, NoneType] = '',
     onnx_graph: Union[onnx.onnx_ml_pb2.ModelProto, NoneType] = None,
-    output_onnx_file_path: Union[str, NoneType] = ''
+    output_onnx_file_path: Union[str, NoneType] = '',
+    non_verbose: Optional[bool] = False
 ) -> onnx.onnx_ml_pb2.ModelProto
 
     Parameters
     ----------
     input_op_names: List[str]
         List of OP names to specify for the input layer of the model.
-        Specify the name of the OP, separated by commas.
         e.g. ['aaa','bbb','ccc']
 
     output_op_names: List[str]
         List of OP names to specify for the output layer of the model.
-        Specify the name of the OP, separated by commas.
         e.g. ['ddd','eee','fff']
 
     input_onnx_file_path: Optional[str]
@@ -98,6 +99,10 @@ extraction(
         If not specified, .onnx is not output.
         Default: ''
 
+    non_verbose: Optional[bool]
+        Do not show all information logs. Only error logs are displayed.
+        Default: False
+
     Returns
     -------
     extracted_graph: onnx.ModelProto
@@ -108,8 +113,8 @@ extraction(
 ```bash
 $ sne4onnx \
 --input_onnx_file_path input.onnx \
---input_op_names aaa,bbb,ccc \
---output_op_names ddd,eee,fff \
+--input_op_names aaa bbb ccc \
+--output_op_names ddd eee fff \
 --output_onnx_file_path output.onnx
 ```
 
@@ -147,8 +152,8 @@ extracted_graph = extraction(
 ```bash
 $ sne4onnx \
 --input_onnx_file_path hitnet_sf_finalpass_720x1280.onnx \
---input_op_names 0,1 \
---output_op_names 497,785 \
+--input_op_names 0 1 \
+--output_op_names 497 785 \
 --output_onnx_file_path hitnet_sf_finalpass_720x960_head.onnx
 ```
 
