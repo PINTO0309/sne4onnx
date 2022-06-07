@@ -125,12 +125,14 @@ def extraction(
     graph.outputs.clear()
 
     # Update graph INPUT/OUTPUT
-    graph.inputs = [
-        graph_node_input \
-            for graph_node in graph_node_inputs \
-                for graph_node_input in graph_node.inputs \
-                    if graph_node_input.shape
-    ]
+    input_tmp = []
+    for graph_node in graph_node_inputs:
+        for graph_node_input in graph_node.inputs:
+            # if graph_node_input.shape and graph_node_input.name not in [i.name for i in input_tmp]:
+            if graph_node_input.shape and graph_node_input not in [i for i in input_tmp]:
+                input_tmp.append(graph_node_input)
+    graph.inputs = input_tmp
+
     graph.outputs = [
         graph_node_output \
             for graph_node in graph_node_outputs \
@@ -138,7 +140,7 @@ def extraction(
     ]
 
     # Cleanup
-    graph.cleanup().toposort()
+    graph.cleanup(remove_unused_graph_inputs=True).toposort()
 
     # Shape Estimation
     extracted_graph = None
