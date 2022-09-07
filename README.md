@@ -34,32 +34,32 @@ $ sne4onnx -h
 
 usage:
     sne4onnx [-h]
-    --input_onnx_file_path INPUT_ONNX_FILE_PATH
-    --input_op_names INPUT_OP_NAMES
-    --output_op_names OUTPUT_OP_NAMES
-    [--output_onnx_file_path OUTPUT_ONNX_FILE_PATH]
-    [--non_verbose]
+    -if INPUT_ONNX_FILE_PATH
+    -ion INPUT_OP_NAMES
+    -oon OUTPUT_OP_NAMES
+    [-of OUTPUT_ONNX_FILE_PATH]
+    [-n]
 
 optional arguments:
   -h, --help
-        show this help message and exit.
+    show this help message and exit
 
-  --input_onnx_file_path INPUT_ONNX_FILE_PATH
-        Input onnx file path.
+  -if INPUT_ONNX_FILE_PATH, --input_onnx_file_path INPUT_ONNX_FILE_PATH
+    Input onnx file path.
 
-  --input_op_names INPUT_OP_NAMES
-        List of OP names to specify for the input layer of the model.
-        e.g. --input_op_names aaa bbb ccc
+  -ion INPUT_OP_NAMES [INPUT_OP_NAMES ...], --input_op_names INPUT_OP_NAMES [INPUT_OP_NAMES ...]
+    List of OP names to specify for the input layer of the model.
+    e.g. --input_op_names aaa bbb ccc
 
-  --output_op_names OUTPUT_OP_NAMES
-        List of OP names to specify for the output layer of the model.
-        e.g. --output_op_names ddd eee fff
+  -oon OUTPUT_OP_NAMES [OUTPUT_OP_NAMES ...], --output_op_names OUTPUT_OP_NAMES [OUTPUT_OP_NAMES ...]
+    List of OP names to specify for the output layer of the model.
+    e.g. --output_op_names ddd eee fff
 
-  --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
-        Output onnx file path. If not specified, extracted.onnx is output.
+  -of OUTPUT_ONNX_FILE_PATH, --output_onnx_file_path OUTPUT_ONNX_FILE_PATH
+    Output onnx file path. If not specified, extracted.onnx is output.
 
-  --non_verbose
-        Do not show all information logs. Only error logs are displayed.
+  -n, --non_verbose
+    Do not show all information logs. Only error logs are displayed.
 ```
 
 ## 3. In-script Usage

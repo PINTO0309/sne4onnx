@@ -165,12 +165,14 @@ def extraction(
 def main():
     parser = ArgumentParser()
     parser.add_argument(
+        '-if',
         '--input_onnx_file_path',
         type=str,
         required=True,
         help='Input onnx file path.'
     )
     parser.add_argument(
+        '-ion',
         '--input_op_names',
         type=str,
         nargs='+',
@@ -180,6 +182,7 @@ def main():
             e.g. --input_op_names aaa bbb ccc"
     )
     parser.add_argument(
+        '-oon',
         '--output_op_names',
         type=str,
         nargs='+',
@@ -189,12 +192,14 @@ def main():
             e.g. --output_op_names ddd eee fff"
     )
     parser.add_argument(
+        '-of',
         '--output_onnx_file_path',
         type=str,
         default='extracted.onnx',
         help='Output onnx file path. If not specified, extracted.onnx is output.'
     )
     parser.add_argument(
+        '-n',
         '--non_verbose',
         action='store_true',
         help='Do not show all information logs. Only error logs are displayed.'
