@@ -187,7 +187,7 @@ def extraction(
     except Exception as e:
         extracted_graph = gs.export_onnx(graph, do_type_check=False, **meta_data)
         if metadata_props is not None:
-            exported_onnx_graph.metadata_props.extend(metadata_props)
+            extracted_graph.metadata_props.extend(metadata_props)
         if not non_verbose:
             print(
                 f'{Color.YELLOW}WARNING:{Color.RESET} '+
