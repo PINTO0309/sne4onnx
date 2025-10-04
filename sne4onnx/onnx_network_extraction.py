@@ -185,7 +185,7 @@ def extraction(
             exported_onnx_graph.metadata_props.extend(metadata_props)
         extracted_graph = onnx.shape_inference.infer_shapes(exported_onnx_graph)
     except Exception as e:
-        extracted_graph = gs.export_onnx(graph, do_type_check=False, **meta_data)
+        exported_onnx_graph = gs.export_onnx(graph, do_type_check=False, **meta_data)
         if metadata_props is not None:
             exported_onnx_graph.metadata_props.extend(metadata_props)
         if not non_verbose:
