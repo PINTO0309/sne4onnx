@@ -3,6 +3,7 @@
 import sys
 from argparse import ArgumentParser
 import onnx
+from onnx.external_data_helper import uses_external_data
 import onnx_graphsurgeon as gs
 from typing import Optional, List
 
@@ -38,12 +39,34 @@ ONNX_STANDARD_DOMAINS = [
 ]
 
 
+def model_uses_external_data(input_onnx_file_path: str) -> bool:
+    model = onnx.load(input_onnx_file_path, load_external_data=False)
+    def iter_tensors_in_graph(g):
+        for t in g.initializer:
+            yield t
+        for t in g.sparse_initializer:
+            yield t
+        for n in g.node:
+            for a in n.attribute:
+                if a.type == onnx.AttributeProto.TENSOR:
+                    yield a.t
+                elif a.type == onnx.AttributeProto.TENSORS:
+                    for t in a.tensors:
+                        yield t
+                elif a.type == onnx.AttributeProto.GRAPH:
+                    yield from iter_tensors_in_graph(a.g)
+                elif a.type == onnx.AttributeProto.GRAPHS:
+                    for sg in a.graphs:
+                        yield from iter_tensors_in_graph(sg)
+    return any(uses_external_data(t) for t in iter_tensors_in_graph(model.graph))
+
 def extraction(
     input_op_names: List[str],
     output_op_names: List[str],
     input_onnx_file_path: Optional[str] = '',
     onnx_graph: Optional[onnx.ModelProto] = None,
     output_onnx_file_path: Optional[str] = '',
+    has_external_data: Optional[bool] = False,
     non_verbose: Optional[bool] = False,
 ) -> onnx.ModelProto:
 
@@ -72,6 +95,9 @@ def extraction(
         Output onnx file path.\n\
         If not specified, .onnx is not output.\n\
         Default: ''
+
+    has_external_data: Optional[bool]
+        Default: False
 
     non_verbose: Optional[bool]
         Do not show all information logs. Only error logs are displayed.\n\
@@ -108,7 +134,9 @@ def extraction(
     graph = None
     if not onnx_graph:
         onnx_graph = onnx.load(input_onnx_file_path)
-    onnx_graph = onnx.shape_inference.infer_shapes(onnx_graph)
+        has_external_data = model_uses_external_data(input_onnx_file_path)
+    if not has_external_data:
+        onnx_graph = onnx.shape_inference.infer_shapes(onnx_graph)
 
     # Acquisition of Node with custom domain
     custom_domain_check_onnx_nodes = []
@@ -265,6 +293,8 @@ def main():
 
     # Load
     onnx_graph = onnx.load(input_onnx_file_path)
+    # External Data Check
+    has_external_data = model_uses_external_data(input_onnx_file_path)
 
     # Model extraction
     extracted_graph = extraction(
@@ -273,6 +303,7 @@ def main():
         output_op_names=output_op_names,
         onnx_graph=onnx_graph,
         output_onnx_file_path=output_onnx_file_path,
+        has_external_data=has_external_data,
         non_verbose=non_verbose,
     )
 
