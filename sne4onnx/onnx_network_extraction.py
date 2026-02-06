@@ -4,7 +4,10 @@ import sys
 from argparse import ArgumentParser
 import onnx
 from onnx.external_data_helper import uses_external_data
-import onnx_graphsurgeon as gs
+try:
+    from . import gs
+except Exception:
+    import sne4onnx.gs as gs
 from typing import Optional, List
 
 class Color:
