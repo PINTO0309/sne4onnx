@@ -193,6 +193,7 @@ class Graph:
     outputs: List[Variable | Constant] = field(default_factory=list)
     opset: int = 13
     name: str = ""
+    import_domains: List[onnx.OperatorSetIdProto] = field(default_factory=list)
 
     def node_ids(self) -> _NodeIDContext:
         return _NodeIDContext(self)
@@ -237,7 +238,7 @@ class Graph:
                     if const_value not in out.inputs:
                         out.inputs.insert(0, const_value)
 
-    def cleanup(self) -> "Graph":
+    def cleanup(self, remove_unused_graph_inputs: bool = False) -> "Graph":
         self._rebuild_edges()
         node_set = set(self.nodes)
         required_nodes = set()
@@ -259,6 +260,16 @@ class Graph:
 
         self.nodes = [node for node in self.nodes if node in required_nodes]
         self._rebuild_edges()
+        if remove_unused_graph_inputs:
+            self.inputs = [
+                graph_input
+                for graph_input in self.inputs
+                if graph_input in self.outputs
+                or any(
+                    isinstance(consumer, Node) and consumer in self.nodes
+                    for consumer in getattr(graph_input, "outputs", [])
+                )
+            ]
         return self
 
     def toposort(self) -> "Graph":
@@ -417,13 +428,17 @@ def import_onnx(model: onnx.ModelProto) -> Graph:
         raise TypeError("import_onnx expects an onnx.ModelProto or onnx.GraphProto")
 
     opset = 13
+    import_domains: List[onnx.OperatorSetIdProto] = []
     for opset_import in model.opset_import:
+        import_domains.append(helper.make_opsetid(opset_import.domain, int(opset_import.version)))
         if opset_import.domain in ("", "ai.onnx"):
             opset = int(opset_import.version)
-            break
+    if not import_domains:
+        import_domains.append(helper.make_opsetid("", opset))
 
     graph = _import_graph_proto(model.graph, opset)
     graph.name = model.graph.name
+    graph.import_domains = import_domains
     return graph
 
 
@@ -566,10 +581,17 @@ def export_onnx(graph: Graph, do_type_check: bool = False, **kwargs: Any) -> onn
         raise TypeError("export_onnx expects a Graph")
 
     opset = int(getattr(graph, "opset", 13) or 13)
+    opset_imports: List[onnx.OperatorSetIdProto] = []
+    for opset_import in getattr(graph, "import_domains", []) or []:
+        domain = getattr(opset_import, "domain", "")
+        version = int(getattr(opset_import, "version", opset) or opset)
+        opset_imports.append(helper.make_opsetid(domain, version))
+    if not opset_imports:
+        opset_imports = [helper.make_opsetid("", opset)]
     graph_proto = _export_graph_proto(graph)
     model = helper.make_model(
         graph_proto,
-        opset_imports=[helper.make_opsetid("", opset)],
+        opset_imports=opset_imports,
     )
 
     for key, value in kwargs.items():
