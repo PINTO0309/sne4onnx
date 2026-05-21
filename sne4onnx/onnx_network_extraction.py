@@ -199,6 +199,16 @@ def extraction(
                 input_tmp.append(graph_node_input)
     graph.inputs = input_tmp
 
+    # Disconnect input tensors from their producer nodes
+    # so that upstream nodes are properly removed during cleanup
+    for inp_tensor in input_tmp:
+        for producer_node in list(inp_tensor.inputs):
+            if hasattr(producer_node, 'outputs'):
+                producer_node.outputs = [
+                    t for t in producer_node.outputs if t is not inp_tensor
+                ]
+        inp_tensor.inputs.clear()
+
     graph.outputs = [
         graph_node_output \
             for graph_node in graph_node_outputs \
